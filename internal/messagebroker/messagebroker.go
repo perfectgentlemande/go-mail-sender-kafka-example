@@ -51,3 +51,7 @@ func (b *Broker) ReadLetter(ctx context.Context) (service.Letter, error) {
 
 	return lt, nil
 }
+
+func (b *Broker) Close() error {
+	return b.reader.Close()
+}

@@ -2,16 +2,19 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
-	"log"
 	"os/signal"
 	"syscall"
 
-	"github.com/segmentio/kafka-go"
+	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/logger"
+	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/messagebroker"
 	"golang.org/x/sync/errgroup"
 )
 
 func main() {
+	log := logger.DefaultLogger()
+
 	ctx := context.Background()
 	ctx, cancel := signal.NotifyContext(ctx,
 		syscall.SIGHUP,
@@ -20,41 +23,40 @@ func main() {
 		syscall.SIGQUIT)
 	defer cancel()
 
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"localhost:9092"},
-		GroupID: "consumer-email",
-		Topic:   "test",
-	})
+	configPath := flag.String("c", "config.yaml", "path to your config")
+	flag.Parse()
 
+	conf, err := readConfig(*configPath)
+	if err != nil {
+		log.WithField("config_path", *configPath).WithError(err).Fatal("failed to read config")
+	}
+
+	mBroker := messagebroker.NewBroker(conf.MessageBroker)
 	rungroup, ctx := errgroup.WithContext(ctx)
 
 	log.Println("starting server")
 	rungroup.Go(func() error {
 		for {
-			m, err := r.ReadMessage(ctx)
+			m, err := mBroker.ReadLetter(ctx)
 			if err != nil {
-				if err == context.Canceled {
-					return nil
-				}
-
 				return fmt.Errorf("cannot read message: %w", err)
 			}
 
-			fmt.Printf("message at topic/partition/offset %v/%v/%v: %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
+			fmt.Printf("read message: %s", m.Contents)
 		}
 	})
 
 	rungroup.Go(func() error {
 		<-ctx.Done()
 
-		if err := r.Close(); err != nil {
-			log.Fatal("failed to close reader:", err)
+		if err := mBroker.Close(); err != nil {
+			log.Fatal("failed to close messageBroker:", err)
 		}
 
 		return nil
 	})
 
-	err := rungroup.Wait()
+	err = rungroup.Wait()
 	if err != nil {
 		log.Println("run group exited because of error", err)
 		return
