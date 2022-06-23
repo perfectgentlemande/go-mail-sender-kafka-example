@@ -3,6 +3,7 @@ module github.com/perfectgentlemande/go-mail-sender-kafka-example
 go 1.18
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/segmentio/kafka-go v0.4.31
 	github.com/sirupsen/logrus v1.8.1
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
