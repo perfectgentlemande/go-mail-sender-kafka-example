@@ -13,15 +13,15 @@ type Broker struct {
 	reader *kafka.Reader
 }
 type Config struct {
-	Addr    string `yaml:"addr"`
-	GroupID string `yaml:"group_id"`
-	Topic   string `yaml:"topic"`
-	Key     string `yaml:"key"`
+	BrokerAddr string `yaml:"broker_addr"`
+	GroupID    string `yaml:"group_id"`
+	Topic      string `yaml:"topic"`
+	Key        string `yaml:"key"`
 }
 
 func NewBroker(conf *Config) *Broker {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{conf.Addr},
+		Brokers: []string{conf.BrokerAddr},
 		GroupID: conf.GroupID,
 		Topic:   conf.Topic,
 	})

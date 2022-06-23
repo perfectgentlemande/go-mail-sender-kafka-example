@@ -1,5 +1,5 @@
 kafka:
-  broker: localhost:9092
-	group_id: consumer-email
-	topic: mailsender
+  broker_addr: localhost:9092
+  group_id: consumer-email
+  topic: mailsender
   key: message
