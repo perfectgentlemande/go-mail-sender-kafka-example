@@ -28,13 +28,14 @@ func main() {
 
 	conf, err := readConfig(*configPath)
 	if err != nil {
-		log.WithField("config_path", *configPath).WithError(err).Fatal("failed to read config")
+		log.WithField("config_path", *configPath).WithError(err).Error("failed to read config")
+		return
 	}
 
 	mBroker := messagebroker.NewBroker(conf.MessageBroker)
 	rungroup, ctx := errgroup.WithContext(ctx)
 
-	log.Println("starting server")
+	log.Info("starting server")
 	rungroup.Go(func() error {
 		for {
 			m, err := mBroker.ReadLetter(ctx)
@@ -42,7 +43,7 @@ func main() {
 				return fmt.Errorf("cannot read message: %w", err)
 			}
 
-			fmt.Printf("read message: %s", m.Contents)
+			log.WithField("contents", m.Contents).Info("read message")
 		}
 	})
 
@@ -50,7 +51,7 @@ func main() {
 		<-ctx.Done()
 
 		if err := mBroker.Close(); err != nil {
-			log.Fatal("failed to close messageBroker:", err)
+			return fmt.Errorf("failed to close messageBroker: %w", err)
 		}
 
 		return nil
@@ -58,9 +59,9 @@ func main() {
 
 	err = rungroup.Wait()
 	if err != nil {
-		log.Println("run group exited because of error", err)
+		log.WithError(err).Error("run group exited because of error")
 		return
 	}
 
-	log.Println("server exited properly")
+	log.Info("server exited properly")
 }
