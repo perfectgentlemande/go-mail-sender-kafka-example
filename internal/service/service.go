@@ -3,8 +3,8 @@ package service
 import "context"
 
 type Letter struct {
-	EmailAddress string
-	Contents     string
+	EmailAddress string `json:"email_address"`
+	Contents     string `json:"contents"`
 }
 
 type Service struct {
