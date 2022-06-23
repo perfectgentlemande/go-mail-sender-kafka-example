@@ -1,4 +1,4 @@
-kafka:
+messagebroker:
   broker_addr: localhost:9092
   group_id: consumer-email
   topic: mailsender
