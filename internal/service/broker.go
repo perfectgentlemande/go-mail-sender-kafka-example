@@ -4,6 +4,6 @@ import (
 	"context"
 )
 
-type Broker interface {
+type MessageBroker interface {
 	ReadLetter(ctx context.Context) (Letter, error)
 }

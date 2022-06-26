@@ -12,14 +12,10 @@ type Letter struct {
 }
 
 type Service struct {
-	Broker Broker
+	Broker MessageBroker
 }
 
-type LettersBroker interface {
-	GetLetter(ctx context.Context) (Letter, error)
-}
-
-func New(br Broker) *Service {
+func New(br MessageBroker) *Service {
 	return &Service{
 		Broker: br,
 	}
