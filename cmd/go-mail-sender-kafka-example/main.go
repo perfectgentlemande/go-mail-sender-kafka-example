@@ -9,6 +9,7 @@ import (
 
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/logger"
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/messagebroker"
+	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/service"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -35,16 +36,15 @@ func main() {
 	mBroker := messagebroker.NewBroker(conf.MessageBroker)
 	rungroup, ctx := errgroup.WithContext(ctx)
 
+	srvc := service.New(mBroker)
+
 	log.Info("starting server")
 	rungroup.Go(func() error {
-		for {
-			m, err := mBroker.ReadLetter(ctx)
-			if err != nil {
-				return fmt.Errorf("cannot read message: %w", err)
-			}
-
-			log.WithField("contents", m.Contents).Info("read message")
+		if err := srvc.ReadLetters(ctx); err != nil {
+			return fmt.Errorf("cannot read letters: %w", err)
 		}
+
+		return nil
 	})
 
 	rungroup.Go(func() error {

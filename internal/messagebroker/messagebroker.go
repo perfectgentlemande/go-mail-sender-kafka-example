@@ -34,10 +34,6 @@ func NewBroker(conf *Config) *Broker {
 func (b *Broker) ReadLetter(ctx context.Context) (service.Letter, error) {
 	m, err := b.reader.ReadMessage(ctx)
 	if err != nil {
-		if err == context.Canceled {
-			return service.Letter{}, nil
-		}
-
 		return service.Letter{}, fmt.Errorf("cannot read message: %w", err)
 	}
 
