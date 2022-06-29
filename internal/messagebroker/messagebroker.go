@@ -19,7 +19,7 @@ type Config struct {
 	Key        string `yaml:"key"`
 }
 
-func NewBroker(conf *Config) *Broker {
+func New(conf *Config) *Broker {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{conf.BrokerAddr},
 		GroupID: conf.GroupID,

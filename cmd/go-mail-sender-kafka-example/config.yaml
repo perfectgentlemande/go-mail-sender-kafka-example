@@ -3,3 +3,6 @@ messagebroker:
   group_id: consumer-email
   topic: mailsender
   key: message
+smtp:
+  addr: localhost:1025
+	no_reply_email_addr: no@reply.ru

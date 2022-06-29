@@ -10,6 +10,7 @@ import (
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/logger"
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/messagebroker"
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/service"
+	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/smtpcli"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -33,10 +34,12 @@ func main() {
 		return
 	}
 
-	mBroker := messagebroker.NewBroker(conf.MessageBroker)
+	mBroker := messagebroker.New(conf.MessageBroker)
+	smtpCli := smtpcli.NewClient(conf.SMTP)
+
 	rungroup, ctx := errgroup.WithContext(ctx)
 
-	srvc := service.New(mBroker)
+	srvc := service.New(mBroker, smtpCli)
 
 	log.Info("starting server")
 	rungroup.Go(func() error {

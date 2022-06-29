@@ -7,17 +7,19 @@ import (
 )
 
 type Letter struct {
-	EmailAddress string `json:"email_address"`
-	Contents     string `json:"contents"`
+	EmailAddresses []string `json:"email_addresses"`
+	Contents       string   `json:"contents"`
 }
 
 type Service struct {
-	Broker MessageBroker
+	Broker  MessageBroker
+	SMTPCli SMTPCli
 }
 
-func New(br MessageBroker) *Service {
+func New(br MessageBroker, smtpCli SMTPCli) *Service {
 	return &Service{
-		Broker: br,
+		Broker:  br,
+		SMTPCli: smtpCli,
 	}
 }
 

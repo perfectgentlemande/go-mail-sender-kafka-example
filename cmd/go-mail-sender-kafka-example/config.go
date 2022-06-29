@@ -5,11 +5,13 @@ import (
 	"os"
 
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/messagebroker"
+	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/smtpcli"
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
 	MessageBroker *messagebroker.Config `yaml:"messagebroker"`
+	SMTP          *smtpcli.Config       `yaml:"smtp"`
 }
 
 func readConfig(fileName string) (*Config, error) {

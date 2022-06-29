@@ -25,8 +25,8 @@ func main() {
 		uuidVal := uuid.NewString()
 
 		msgPayload := service.Letter{
-			EmailAddress: uuidVal + "@test.com",
-			Contents:     "Hello, " + uuidVal,
+			EmailAddresses: []string{uuidVal + "@test.com"},
+			Contents:       "Hello, " + uuidVal,
 		}
 
 		data, err := json.Marshal(msgPayload)
