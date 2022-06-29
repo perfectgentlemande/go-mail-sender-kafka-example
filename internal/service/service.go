@@ -23,6 +23,9 @@ func New(br MessageBroker, smtpCli SMTPCli) *Service {
 	}
 }
 
+func (s *Service) SendLetter(ctx context.Context, letter *Letter) error {
+	return s.SMTPCli.SendLetter(ctx, letter)
+}
 func (s *Service) ReadLetter(ctx context.Context) (Letter, error) {
 	return s.Broker.ReadLetter(ctx)
 }
@@ -38,6 +41,9 @@ func (s *Service) ReadLetters(ctx context.Context) error {
 			return fmt.Errorf("cannot read message: %w", err)
 		}
 
-		fmt.Println(m.Contents)
+		err = s.SendLetter(ctx, &m)
+		if err != nil {
+			return fmt.Errorf("cannot send message: %w", err)
+		}
 	}
 }
