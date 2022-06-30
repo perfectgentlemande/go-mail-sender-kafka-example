@@ -3,7 +3,7 @@ services:
   maildev:
     image: maildev/maildev
     ports: 
-      - "25:1025"
+      - "1025:1025"
       - "1080:1080"
   zookeeper:
     image: wurstmeister/zookeeper

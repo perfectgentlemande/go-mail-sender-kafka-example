@@ -5,4 +5,4 @@ messagebroker:
   key: message
 smtp:
   addr: localhost:1025
-	no_reply_email_addr: no@reply.ru
+  no_reply_email_addr: "no@reply.ru"
