@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"os/signal"
@@ -43,11 +44,24 @@ func main() {
 
 	log.Info("starting server")
 	rungroup.Go(func() error {
-		if err := srvc.ReadLetters(ctx); err != nil {
-			return fmt.Errorf("cannot read letters: %w", err)
-		}
+		for {
+			m, err := srvc.ReadLetter(ctx)
+			if err != nil {
+				if errors.Is(err, context.Canceled) {
+					return nil
+				}
 
-		return nil
+				// use srvc.ReadAndSendLetters() to abort after the first read message error
+				log.WithError(err).Error("cannot read message")
+				continue
+			}
+
+			err = srvc.SendLetter(ctx, &m)
+			if err != nil {
+				// use srvc.ReadAndSendLetters() to abort after the first SMTP error
+				log.WithError(err).Error("cannot send message")
+			}
+		}
 	})
 
 	rungroup.Go(func() error {
