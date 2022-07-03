@@ -12,6 +12,7 @@ import (
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/messagebroker"
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/service"
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/smtpcli"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -42,6 +43,8 @@ func main() {
 
 	srvc := service.New(mBroker, smtpCli)
 
+	fmt.Println(conf.MessageBroker)
+
 	log.Info("starting server")
 	rungroup.Go(func() error {
 		for {
@@ -61,6 +64,11 @@ func main() {
 				// use srvc.ReadAndSendLetters() to abort after the first SMTP error
 				log.WithError(err).Error("cannot send message")
 			}
+
+			log.WithFields(logrus.Fields{
+				"emails":   m.EmailAddresses,
+				"contents": m.Contents,
+			}).Info("successfully sent message")
 		}
 	})
 
