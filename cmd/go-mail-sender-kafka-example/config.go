@@ -10,8 +10,9 @@ import (
 )
 
 type Config struct {
-	MessageBroker *messagebroker.Config `yaml:"messagebroker"`
-	SMTP          *smtpcli.Config       `yaml:"smtp"`
+	MessageBroker  *messagebroker.Config  `yaml:"messagebroker"`
+	SMTP           *smtpcli.Config        `yaml:"smtp"`
+	MessageHandler *messagehandler.Config `yaml:"messagehandler"`
 }
 
 func readConfig(fileName string) (*Config, error) {

@@ -6,3 +6,4 @@ messagebroker:
 smtp:
   addr: localhost:1025
   no_reply_email_addr: "no@reply.ru"
+rate_microseconds: 10000000
