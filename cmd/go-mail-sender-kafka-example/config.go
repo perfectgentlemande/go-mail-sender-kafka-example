@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/messagebroker"
+	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/messagehandler"
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/smtpcli"
 	"gopkg.in/yaml.v3"
 )
