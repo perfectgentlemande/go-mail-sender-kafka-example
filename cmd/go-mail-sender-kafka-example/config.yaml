@@ -7,4 +7,5 @@ smtp:
   addr: localhost:1025
   no_reply_email_addr: "no@reply.ru"
 messagehandler:
-  rate_microseconds: 1000000
+  rate_period_microseconds: 1000000
+  requests_per_period: 2

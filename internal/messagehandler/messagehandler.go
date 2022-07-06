@@ -10,7 +10,8 @@ import (
 )
 
 type Config struct {
-	RateMicroseconds int64 `yaml:"rate_microseconds"`
+	RatePeriodMicroseconds int64 `yaml:"rate_period_microseconds"`
+	RequestsPerPeriod      int64 `yaml:"requests_per_period"`
 }
 
 type MessageHandler interface {
@@ -18,11 +19,12 @@ type MessageHandler interface {
 }
 
 func New(srvc *service.Service, log *logrus.Entry, conf *Config) MessageHandler {
-	if conf.RateMicroseconds > 0 {
+	if conf.RatePeriodMicroseconds > 0 {
 		return &messageHandlerWithRateLimiter{
-			srvc:   srvc,
-			log:    log,
-			ticker: time.NewTicker(time.Duration(conf.RateMicroseconds) * time.Microsecond),
+			srvc:        srvc,
+			log:         log,
+			ticker:      time.NewTicker(time.Duration(conf.RatePeriodMicroseconds) * time.Microsecond),
+			maxRequests: conf.RequestsPerPeriod,
 		}
 	}
 
@@ -64,34 +66,39 @@ func (mh *messageHandler) HandleMessages(ctx context.Context) error {
 }
 
 type messageHandlerWithRateLimiter struct {
-	srvc   *service.Service
-	log    *logrus.Entry
-	ticker *time.Ticker
+	srvc        *service.Service
+	log         *logrus.Entry
+	ticker      *time.Ticker
+	maxRequests int64
 }
 
 func (mh *messageHandlerWithRateLimiter) HandleMessages(ctx context.Context) error {
 	for {
 		select {
 		case <-mh.ticker.C:
-			m, err := mh.srvc.ReadLetter(ctx)
-			if err != nil {
-				if errors.Is(err, context.Canceled) {
-					return nil
+			requestCounter := 0
+			for requestCounter < int(mh.maxRequests) {
+				m, err := mh.srvc.ReadLetter(ctx)
+				if err != nil {
+					if errors.Is(err, context.Canceled) {
+						return nil
+					}
+
+					mh.log.WithError(err).Error("cannot read message")
+					continue
 				}
 
-				mh.log.WithError(err).Error("cannot read message")
-				continue
-			}
+				err = mh.srvc.SendLetter(ctx, &m)
+				if err != nil {
+					mh.log.WithError(err).Error("cannot send message")
+				}
 
-			err = mh.srvc.SendLetter(ctx, &m)
-			if err != nil {
-				mh.log.WithError(err).Error("cannot send message")
+				mh.log.WithFields(logrus.Fields{
+					"emails":   m.EmailAddresses,
+					"contents": m.Contents,
+				}).Info("successfully sent message")
+				requestCounter++
 			}
-
-			mh.log.WithFields(logrus.Fields{
-				"emails":   m.EmailAddresses,
-				"contents": m.Contents,
-			}).Info("successfully sent message")
 		case <-ctx.Done():
 			return nil
 		}
