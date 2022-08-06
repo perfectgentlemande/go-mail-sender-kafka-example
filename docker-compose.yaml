@@ -48,7 +48,7 @@ services:
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
     volumes:
       - kafka-data-vol:/var/lib/kafka/data
-      - kafka-secrets-vol:/etc/kafka/secrets]
+      - kafka-secrets-vol:/etc/kafka/secrets
 volumes:
   zookeeper-data-vol:
   zookeeper-log-vol:
