@@ -6,23 +6,52 @@ services:
       - "1025:1025"
       - "1080:1080"
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: confluentinc/cp-zookeeper:7.2.1
+    hostname: zookeeper
+    container_name: zookeeper
     ports:
       - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     volumes:
-      - zookeeper-data-vol:/var/lib/zookeeper/data
-      - zookeeper-log-vol:/var/lib/zookeeper/log
-  kafka:
-    image: wurstmeister/kafka
+      - zookeeper-data-vol:/var/lib/zookeeper/data 
+      - zookeeper-log-vol:/var/lib/zookeeper/log 
+      - zookeeper-secrets-vol:/etc/zookeeper/secrets
+  broker:
+    image: confluentinc/cp-server:7.2.1
+    hostname: broker
+    container_name: broker
+    depends_on:
+      - zookeeper
     ports:
       - "9092:9092"
+      - "9101:9101"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_CREATE_TOPICS: "mailsender:1:1"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
     volumes:
-      - kafka-vol:/var/lib/kafka/data
+      - kafka-data-vol:/var/lib/kafka/data
+      - kafka-secrets-vol:/etc/kafka/secrets]
 volumes:
-  kafka-vol:
   zookeeper-data-vol:
   zookeeper-log-vol:
+  zookeeper-secrets-vol:
+  kafka-data-vol:
+  kafka-secrets-vol:
