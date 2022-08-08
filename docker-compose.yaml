@@ -2,6 +2,8 @@ version: "3.9"
 services:
   maildev:
     image: maildev/maildev
+    networks:
+      - sender_network
     ports: 
       - "1025:1025"
       - "1080:1080"
@@ -49,6 +51,14 @@ services:
     volumes:
       - kafka-data-vol:/var/lib/kafka/data
       - kafka-secrets-vol:/etc/kafka/secrets
+  go-kafka-app:
+    build: .
+    depends_on:
+      - broker
+    networks:
+      - sender_network
+networks:
+  sender_network:
 volumes:
   zookeeper-data-vol:
   zookeeper-log-vol:

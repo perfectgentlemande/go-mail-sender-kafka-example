@@ -18,10 +18,6 @@ There are 2 ideas:
 
 Use `go run .` from the folder that contains `main.go`.
 
-### Running via Docker
-
-As a part of my Docker skill practices I stil try to run everything with Docker commands as well.
-
 ### Running via Docker Compose
 
 As simple as:  
