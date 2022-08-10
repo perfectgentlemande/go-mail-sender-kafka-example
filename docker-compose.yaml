@@ -14,10 +14,10 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    volumes:
-      - zookeeper-data-vol:/var/lib/zookeeper/data 
-      - zookeeper-log-vol:/var/lib/zookeeper/log 
-      - zookeeper-secrets-vol:/etc/zookeeper/secrets
+    # volumes:
+    #   - zookeeper-data-vol:/var/lib/zookeeper/data 
+    #   - zookeeper-log-vol:/var/lib/zookeeper/log 
+    #   - zookeeper-secrets-vol:/etc/zookeeper/secrets
   broker:
     image: confluentinc/cp-server:7.2.1
     hostname: broker
@@ -46,9 +46,9 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-    volumes:
-      - kafka-data-vol:/var/lib/kafka/data
-      - kafka-secrets-vol:/etc/kafka/secrets
+    # volumes:
+    #   - kafka-data-vol:/var/lib/kafka/data
+    #   - kafka-secrets-vol:/etc/kafka/secrets
 volumes:
   zookeeper-data-vol:
   zookeeper-log-vol:
