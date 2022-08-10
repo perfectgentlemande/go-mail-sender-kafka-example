@@ -8,9 +8,9 @@ messagebroker:
   key: message
 smtp:
  # uncomment this for go run .
-  # addr: localhost:1025
+  addr: localhost:1025
  # uncomment this for docker compose
-  addr: maildev:1025
+  # addr: maildev:1025
   no_reply_email_addr: "no@reply.ru"
 messagehandler:
   rate_period_microseconds: 1000000
