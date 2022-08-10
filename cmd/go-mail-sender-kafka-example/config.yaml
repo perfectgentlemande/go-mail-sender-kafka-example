@@ -2,7 +2,7 @@ messagebroker:
  # uncomment this for go run .
   # broker_addr: localhost:9092
  # uncomment this for docker compose
-  broker_addr: broker:9092
+  broker_addr: localhost:9092
   group_id: consumer-email
   topic: mailsender
   key: message
