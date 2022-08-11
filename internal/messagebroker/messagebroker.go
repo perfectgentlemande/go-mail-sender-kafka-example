@@ -20,8 +20,6 @@ type Config struct {
 }
 
 func New(conf *Config) *Broker {
-	fmt.Println(conf.BrokerAddr)
-
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{conf.BrokerAddr},
 		GroupID: conf.GroupID,

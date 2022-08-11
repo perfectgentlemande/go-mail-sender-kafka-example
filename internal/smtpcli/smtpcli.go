@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/logger"
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/service"
 )
 
@@ -25,8 +24,6 @@ func NewClient(conf *Config) *Client {
 }
 
 func (c *Client) SendLetter(ctx context.Context, letter *service.Letter) error {
-	logger.DefaultLogger().Info(c.conf.Addr)
-
 	err := smtp.SendMail(
 		c.conf.Addr,
 		nil,
