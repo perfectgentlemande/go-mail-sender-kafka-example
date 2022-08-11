@@ -43,10 +43,7 @@ func main() {
 	srvc := service.New(mBroker, smtpCli)
 	mHandler := messagehandler.New(srvc, log, conf.MessageHandler)
 
-	fmt.Println(conf.MessageBroker)
-
 	log.Info("starting server")
-
 	rungroup.Go(func() error {
 		return mHandler.HandleMessages(ctx)
 	})

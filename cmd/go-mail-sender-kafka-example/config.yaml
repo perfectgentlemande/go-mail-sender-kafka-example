@@ -2,15 +2,15 @@ messagebroker:
  # uncomment this for go run .
   # broker_addr: localhost:9092
  # uncomment this for docker compose
-  broker_addr: localhost:9092
+  broker_addr: broker:29092
   group_id: consumer-email
   topic: mailsender
   key: message
 smtp:
  # uncomment this for go run .
-  addr: localhost:1025
+  # addr: localhost:1025
  # uncomment this for docker compose
-  # addr: maildev:1025
+  addr: maildev:1025
   no_reply_email_addr: "no@reply.ru"
 messagehandler:
   rate_period_microseconds: 1000000

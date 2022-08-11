@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/logger"
 )
 
 type Letter struct {
@@ -39,7 +41,9 @@ func (s *Service) ReadAndSendLetters(ctx context.Context) error {
 				return nil
 			}
 
-			return fmt.Errorf("cannot read message: %w", err)
+			logger.DefaultLogger().Info("hello 3")
+
+			return fmt.Errorf("cannot read message 3: %w", err)
 		}
 
 		err = s.SendLetter(ctx, &m)
