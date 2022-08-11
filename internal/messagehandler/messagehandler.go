@@ -91,6 +91,8 @@ func (mh *messageHandlerWithRateLimiter) HandleMessages(ctx context.Context) err
 				err = mh.srvc.SendLetter(ctx, &m)
 				if err != nil {
 					mh.log.WithError(err).Error("cannot send message")
+					requestCounter++
+					continue
 				}
 
 				mh.log.WithFields(logrus.Fields{

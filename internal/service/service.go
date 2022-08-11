@@ -41,9 +41,9 @@ func (s *Service) ReadAndSendLetters(ctx context.Context) error {
 				return nil
 			}
 
-			logger.DefaultLogger().Info("hello 3")
+			logger.DefaultLogger().Info("hello")
 
-			return fmt.Errorf("cannot read message 3: %w", err)
+			return fmt.Errorf("cannot read message: %w", err)
 		}
 
 		err = s.SendLetter(ctx, &m)
