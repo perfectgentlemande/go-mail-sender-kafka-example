@@ -14,6 +14,8 @@ services:
     ports: 
       - "1025:1025"
       - "1080:1080"
+    networks:
+      - sender_network
   zookeeper:
     image: confluentinc/cp-zookeeper:7.2.1
     hostname: zookeeper
