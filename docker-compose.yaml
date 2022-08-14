@@ -2,8 +2,6 @@ version: "3.9"
 services:
   go-kafka-app:
     build: .
-    networks:
-      - sender_network
     ports:
       - "8080:80"
     depends_on:
@@ -14,8 +12,6 @@ services:
     ports: 
       - "1025:1025"
       - "1080:1080"
-    networks:
-      - sender_network
   zookeeper:
     image: confluentinc/cp-zookeeper:7.2.1
     hostname: zookeeper
@@ -25,16 +21,13 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - sender_network
-    # volumes:
-    #   - zookeeper-data-vol:/var/lib/zookeeper/data 
-    #   - zookeeper-log-vol:/var/lib/zookeeper/log 
-    #   - zookeeper-secrets-vol:/etc/zookeeper/secrets
+
   broker:
     image: confluentinc/cp-server:7.2.1
-    # hostname: broker
-    # container_name: broker
+    hostname: broker
+    container_name: broker
+    depends_on:
+      - zookeeper
     ports:
       - "9092:9092"
       - "9101:9101"
@@ -57,18 +50,3 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-    networks:
-      - sender_network
-    depends_on:
-      - zookeeper
-    # volumes:
-    #   - kafka-data-vol:/var/lib/kafka/data
-    #   - kafka-secrets-vol:/etc/kafka/secrets
-volumes:
-  zookeeper-data-vol:
-  zookeeper-log-vol:
-  zookeeper-secrets-vol:
-  kafka-data-vol:
-  kafka-secrets-vol:
-networks:
-  sender_network:  
