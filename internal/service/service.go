@@ -6,6 +6,11 @@ import (
 	"fmt"
 )
 
+var (
+	ErrConnRefused = errors.New("connection refused")
+	ErrNoSuchHost  = errors.New("no such host")
+)
+
 type Letter struct {
 	EmailAddresses []string `json:"email_addresses"`
 	Contents       string   `json:"contents"`

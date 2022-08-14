@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/perfectgentlemande/go-mail-sender-kafka-example/internal/service"
 	"github.com/segmentio/kafka-go"
@@ -34,7 +35,14 @@ func New(conf *Config) *Broker {
 func (b *Broker) ReadLetter(ctx context.Context) (service.Letter, error) {
 	m, err := b.reader.ReadMessage(ctx)
 	if err != nil {
-		return service.Letter{}, fmt.Errorf("cannot read message shit: %w", err)
+		if strings.Contains(err.Error(), service.ErrConnRefused.Error()) {
+			return service.Letter{}, service.ErrConnRefused
+		}
+		if strings.Contains(err.Error(), service.ErrNoSuchHost.Error()) {
+			return service.Letter{}, service.ErrNoSuchHost
+		}
+
+		return service.Letter{}, fmt.Errorf("cannot read message: %w", err)
 	}
 
 	lt := service.Letter{}

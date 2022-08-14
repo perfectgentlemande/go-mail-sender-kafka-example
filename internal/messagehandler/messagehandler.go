@@ -46,6 +46,9 @@ func (mh *messageHandler) HandleMessages(ctx context.Context) error {
 			if errors.Is(err, context.Canceled) {
 				return nil
 			}
+			if errors.Is(err, service.ErrConnRefused) || errors.Is(err, service.ErrNoSuchHost) {
+				return err
+			}
 
 			// use srvc.ReadAndSendLetters() to abort after the first read message error
 			mh.log.WithError(err).Error("cannot read message")
@@ -82,6 +85,9 @@ func (mh *messageHandlerWithRateLimiter) HandleMessages(ctx context.Context) err
 				if err != nil {
 					if errors.Is(err, context.Canceled) {
 						return nil
+					}
+					if errors.Is(err, service.ErrConnRefused) || errors.Is(err, service.ErrNoSuchHost) {
+						return err
 					}
 
 					mh.log.WithError(err).Error("cannot read message")
