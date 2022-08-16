@@ -16,10 +16,8 @@ There are 2 ideas:
 
 ### Running
 
-Use `go run .` from the folder that contains `main.go`.
-
-### Running via Docker Compose
-
-As simple as:  
+1) Use `docker-compose` to run the containers with Kafka, Zookeeper and Maildev:  
 - `docker-compose build`  
 - `docker-compose up`  
+  
+2) Use `go run .` from the folder that contains `main.go` to run the example.
